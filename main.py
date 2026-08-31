@@ -12,3 +12,6 @@ janela.title("MaxLanguage - Teste GUI")
 # Adicionando um elemento na tela
 label = ctk.CTkLabel(janela, text="CustomTkinter rodando com sucesso!", font=("Arial", 16))
 label.pack(pady=100)
+
+# Mantém a janela aberta
+janela.mainloop()
