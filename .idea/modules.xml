@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MaxLanguage.iml" filepath="$PROJECT_DIR$/.idea/MaxLanguage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/maxlanguage.iml" filepath="$PROJECT_DIR$/.idea/maxlanguage.iml" />
     </modules>
   </component>
 </project>

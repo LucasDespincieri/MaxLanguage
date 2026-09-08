@@ -12,5 +12,13 @@ class Gerenciador:
             open(self.caminhoArquivo, 'w').close()
 
     def gravarRegistro(self, dado):
-        pass
+        with open(self.caminhoArquivo, 'a', encoding='utf-8') as arquivo:
+            posicao = arquivo.tell()
+            arquivo.write(dado + '\n')
+            return posicao
 
+    def lerRegistro(self, posicao):
+        with open(self.caminhoArquivo, 'r', encoding='utf-8') as arquivo:
+            arquivo.seek(posicao)
+            linha = arquivo.readline()
+            return linha.strip()
