@@ -1,7 +1,7 @@
 class No:
-    def __init__(self, codigo, posicao_arquivo):
+    def __init__(self, codigo, posicaoArquivo):
         self.codigo = codigo
-        self.posicaoArquivo = posicao_arquivo
+        self.posicaoArquivo = posicaoArquivo
         self.esquerda = None
         self.direita = None
 
@@ -10,9 +10,9 @@ class ArvoreBinaria:
     def __init__(self):
         self.raiz = None
 
-    def inserir(self, codigo, posicao_arquivo):
+    def inserir(self, codigo, posicaoArquivo):
 
-        novo = No(codigo, posicao_arquivo)
+        novo = No(codigo, posicaoArquivo)
 
         if self.raiz is None:
             self.raiz = novo

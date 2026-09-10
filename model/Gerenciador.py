@@ -1,7 +1,7 @@
 import os
 
-
 class Gerenciador:
+
     def __init__(self, nomeArquivo):
 
         self.caminhoArquivo = f"data/{nomeArquivo}"
