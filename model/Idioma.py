@@ -26,8 +26,12 @@ class Idioma:
 
 
   def adicionarIdioma(self, codigo, nome):
-      linhaString = f"{codigo};{nome}"
 
+      if self.arvore.buscar(codigo) is not None:
+          print("codigo ja existe")
+          return
+
+      linhaString = f"{codigo};{nome}"
       posicao = self.arquivo.gravarRegistro(linhaString)
       self.arvore.inserir(codigo,posicao)
       print(f"Idioma {nome} adicionado")
