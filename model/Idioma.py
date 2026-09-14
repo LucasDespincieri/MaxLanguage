@@ -48,3 +48,16 @@ class Idioma:
               return {"codigo": int(dados[0]), "nome": dados[1]}
 
       return None
+
+  def deletarIdioma(self, codigo):
+
+      noEncontrado = self.arvore.buscar(codigo)
+
+      if noEncontrado is None:
+          print(f"Código informardo ({codigo}) não existe")
+          return
+
+      self.arquivo.excluirRegistro(noEncontrado.poiscaoArquivo)
+      self.arvore.excluirNo(codigo)
+
+      print("Idioma deletado com sucesso!")

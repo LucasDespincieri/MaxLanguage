@@ -22,3 +22,8 @@ class Gerenciador:
             arquivo.seek(posicao)
             linha = arquivo.readline()
             return linha.strip()
+
+    def excluirRegistro(self, posicao):
+        with open(self.caminhoArquivo, 'r+', encoding='utf-8') as arquivo:
+            arquivo.seek(posicao)
+            arquivo.write("#")
