@@ -29,10 +29,10 @@ class ArvoreBinaria:
             else:
                 noAtual = noPai.direita
 
-            if codigo < noPai.codigo:
-                noPai.esquerda = noAtual
-            else:
-                noPai.direita = noAtual
+        if codigo < noPai.codigo:
+            noPai.esquerda = novo
+        else:
+            noPai.direita = novo
 
     def buscar(self, codigo):
 
@@ -46,6 +46,7 @@ class ArvoreBinaria:
                 noAtual = noAtual.esquerda
             else:
                 noAtual = noAtual.direita
+
         return None
 
     def excluirNo(self, codigo):
@@ -79,9 +80,3 @@ class ArvoreBinaria:
         while no_atual.esquerda is not None:
             no_atual = no_atual.esquerda
         return no_atual
-
-    def encontrarMenorNo(self):
-        noAtual = self.raiz
-        while noAtual.esquerda is not None:
-            noAtual = noAtual.esquerda
-        return noAtual

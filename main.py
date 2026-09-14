@@ -1,17 +1,16 @@
-import customtkinter as ctk
+from model.Idioma import Idioma
 
-# Configuração básica de tema
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+tabela = Idioma()
 
-# Criação da janela principal
-janela = ctk.CTk()
-janela.geometry("400x300")
-janela.title("MaxLanguage - Teste GUI")
+tabela.adicionarIdioma(1, "Inglês")
+tabela.adicionarIdioma(5, "Espanhol")
+tabela.adicionarIdioma(3, "Japonês")
 
-# Adicionando um elemento na tela
-label = ctk.CTkLabel(janela, text="CustomTkinter rodando com sucesso!", font=("Arial", 16))
-label.pack(pady=100)
+print("\n--- Teste de Busca ---")
+codigo = 3
+resultado = tabela.buscarIdioma(codigo)
 
-# Mantém a janela aberta
-janela.mainloop()
+if resultado:
+    print(f"Idioma encontrado! Código: {resultado['codigo']} | Descrição: {resultado['nome']}")
+else:
+    print("Idioma não existe.")
