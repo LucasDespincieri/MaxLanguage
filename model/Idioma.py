@@ -57,7 +57,7 @@ class Idioma:
           print(f"Código informardo ({codigo}) não existe")
           return
 
-      self.arquivo.excluirRegistro(noEncontrado.poiscaoArquivo)
+      self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
       self.arvore.excluirNo(codigo)
 
       print("Idioma deletado com sucesso!")

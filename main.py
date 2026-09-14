@@ -14,3 +14,6 @@ if resultado:
     print(f"Idioma encontrado! Código: {resultado['codigo']} | Descrição: {resultado['nome']}")
 else:
     print("Idioma não existe.")
+
+tabela.deletarIdioma(5)
+
