@@ -8,6 +8,7 @@ class Usuario:
         self.arvore = ArvoreBinaria()
         self.arquivo = Gerenciador("usuario.txt")
         self.tabelaIdioma = tabelaIdioma
+        self.carregarArvore()
 
 
     def carregarArvore(self):
@@ -33,7 +34,7 @@ class Usuario:
         idiomaEscolhido = self.tabelaIdioma.buscarIdioma(codIdioma)
 
         if idiomaEscolhido is None:
-            print(f"codigo inserido({codigo}) não pertence a nenhum idioma")
+            print(f"codigo inserido({codIdioma}) não pertence a nenhum idioma")
             return
 
         nivel = 1
@@ -52,7 +53,7 @@ class Usuario:
 
         if noEncnotrado is not None:
             linha = self.arquivo.lerRegistro(noEncnotrado.posicaoArquivo)
-            dados = linha.strip()
+            dados = linha.strip().split(";")
 
             if len(dados) == 5:
                 return {
