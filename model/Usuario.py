@@ -65,3 +65,14 @@ class Usuario:
                 }
             return None
 
+    def atualizarStatus(self, codigo, novoNivel, novaPontuacao):
+        noEncontrado = self.arvore.buscar(codigo)
+        usuarioAntigo = self.buscarUsuario(codigo)
+
+        if noEncontrado is not None and usuarioAntigo is not None:
+            self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
+
+            string = f"{codigo};{usuarioAntigo['nome']};{usuarioAntigo['cod_idioma']};{novoNivel};{novaPontuacao}"
+            novaPosicao = self.arquivo.gravarRegistro(string)
+
+            noEncontrado.posicaoArquivo = novaPosicao
