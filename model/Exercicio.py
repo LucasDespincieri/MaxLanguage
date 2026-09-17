@@ -1,17 +1,14 @@
-from unicodedata import digit
-
-from main import tabelLicao
 from model.ArvoreBinaria import ArvoreBinaria
 from model.Gerenciador import Gerenciador
 
 
 class Exercicio:
 
-    def __init__(self, tabelaIdioma, tabelLicao):
+    def __init__(self, tabelaLicao, tabelaIdioma):
         self.arvore = ArvoreBinaria()
         self.arquivo = Gerenciador("exercicio.txt")
         self.tabelaIdioma = tabelaIdioma
-        self.tabelaLicao = tabelLicao
+        self.tabelaLicao = tabelaLicao
         self.carregarArvore()
 
 
@@ -21,7 +18,7 @@ class Exercicio:
             linha = arquivo.readline()
 
             while linha:
-                dados = linha.strip().strip(";")
+                dados = linha.strip().split(";")
 
                 if len(dados) >= 1 and dados[0].isdigit():
 
@@ -33,7 +30,7 @@ class Exercicio:
 
 
     def adicionarExercicio(self, codigo, codLicao, nivelDificuldade,
-                           tipo, descricao, opcoes, resposta, pontucao):
+                           tipo, descricao, opcoes, resposta, pontuacao):
 
         if self.arvore.buscar(codigo) is not None:
             print(f"O codigo inserido({codigo}) já existe na tabela de exercício")
@@ -50,7 +47,7 @@ class Exercicio:
         nomeIdioma = idiomaEncontrado['nome'] if idiomaEncontrado else "Desconhecido"
 
         string = (f"{codigo};{codLicao};{nivelDificuldade};{tipo};{descricao};{opcoes};"
-                  f"{resposta};{pontucao}")
+                  f"{resposta};{pontuacao}")
 
         posicao = self.arquivo.gravarRegistro(string)
         self.arvore.inserir(codigo, posicao)
@@ -69,12 +66,12 @@ class Exercicio:
 
                 return {
                     "codigo": int(dados[0]),
-                    "cod_licao": int(dados[1]),
-                    "nivel_dificuldade": int(dados[2]),
+                    "codLicao": int(dados[1]),
+                    "nivelDificuldade": int(dados[2]),
                     "tipo": int(dados[3]),
                     "descricao": dados[4],
                     "opcoes": lista_opcoes,
-                    "resposta_correta": dados[6],
+                    "respostaCorreta": dados[6],
                     "pontuacao": int(dados[7])
                 }
         return None

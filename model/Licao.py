@@ -54,7 +54,7 @@ class Licao:
                 return {
                     "codigo": int(dados[0]),
                     "titulo": dados[1],
-                    "cod_idioma": int(dados[2])
+                    "codIdioma": int(dados[2])
                 }
 
         return None
