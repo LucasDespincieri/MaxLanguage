@@ -36,3 +36,17 @@ class GameController:
 
         self.tabelaUsuario.atualizarStatus(codUsuario, nivelAtual, pontosAtuais)
         return mensagem
+
+    def gerarRanking(self):
+        usuarios = self.tabelaUsuario.listarTodosUsuarios()
+
+        if not usuarios:
+            return "Nenhum usuário cadastrado no momento."
+
+        usuarios.sort(key=lambda u: u['pontuacao'], reverse=True)
+
+        rankingFormatado = "\n🏆 --- RANKING MAXLANGUAGE --- 🏆\n"
+        for posicao, usuario in enumerate(usuarios, start=1):
+            rankingFormatado += f"{posicao}º Lugar | {usuario['nome']} - Nível {usuario['nivel']} com {usuario['pontuacao']} XP\n"
+
+        return rankingFormatado
