@@ -76,3 +76,19 @@ class Usuario:
             novaPosicao = self.arquivo.gravarRegistro(string)
 
             noEncontrado.posicaoArquivo = novaPosicao
+
+    def listarTodosUsuarios(self):
+        lista_usuarios = []
+
+        def percorrerArvore(noAtual):
+            if noAtual is not None:
+                percorrerArvore(noAtual.esquerda)
+
+                usuario = self.buscarUsuario(noAtual.codigo)
+                if usuario is not None:
+                    lista_usuarios.append(usuario)
+
+                percorrerArvore(noAtual.direita)
+
+        percorrerArvore(self.arvore.raiz)
+        return lista_usuarios
