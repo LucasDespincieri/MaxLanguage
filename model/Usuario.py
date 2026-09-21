@@ -65,6 +65,19 @@ class Usuario:
                 }
             return None
 
+    def deletarUsuario(self, codigo):
+
+        noEncontrado = self.arvore.buscar(codigo)
+
+        if noEncontrado is None:
+            print(f"Código informardo ({codigo}) não existe")
+            return
+
+        self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
+        self.arvore.excluirNo(codigo)
+
+        print("Idioma deletado com sucesso!")
+
     def atualizarStatus(self, codigo, novoNivel, novaPontuacao):
         noEncontrado = self.arvore.buscar(codigo)
         usuarioAntigo = self.buscarUsuario(codigo)
