@@ -79,9 +79,9 @@ class Exercicio:
     def buscarExercicioPorNivel(self, nivel_desejado):
         exerciciosEncontrados = []
 
-        def varrerArvore(noAtual):
+        def percorrerArvore(noAtual):
             if noAtual is not None:
-                varrerArvore(noAtual.esquerda)
+                percorrerArvore(noAtual.esquerda)
 
                 linha = self.arquivo.lerRegistro(noAtual.posicaoArquivo)
                 dados = linha.strip().split(';')
@@ -104,9 +104,9 @@ class Exercicio:
                         }
                         exerciciosEncontrados.append(exercicio)
 
-                varrerArvore(noAtual.direita)
+                percorrerArvore(noAtual.direita)
 
-        varrerArvore(self.arvore.raiz)
+        percorrerArvore(self.arvore.raiz)
 
         if exerciciosEncontrados:
             import random

@@ -25,7 +25,7 @@ class Licao:
                 linha = arquivo.readline()
 
 
-    def adicionarLicao(self,codigo, titulo, codIdioma):
+    def adicionarLicao(self,codigo, titulo, codIdioma, totalNiveis):
         if self.arvore.buscar(codigo) is not None:
             print(f"O codigo inserido({codigo}) já existe na tabela de lição")
             return
@@ -36,7 +36,7 @@ class Licao:
             print(f"O codigo inserido({codIdioma}) não existe na tabela de idioma")
             return
 
-        string = f"{codigo};{titulo};{codIdioma}"
+        string = f"{codigo};{titulo};{codIdioma};{totalNiveis}"
         posicao = self.arquivo.gravarRegistro(string)
         self.arvore.inserir(codigo, posicao)
 
@@ -50,11 +50,26 @@ class Licao:
             linha = self.arquivo.lerRegistro(noEncontrado.posicaoArquivo)
             dados = linha.strip().split(";")
 
-            if len(dados) == 3:
+            if len(dados) == 4:
                 return {
                     "codigo": int(dados[0]),
                     "titulo": dados[1],
-                    "codIdioma": int(dados[2])
+                    "codIdioma": int(dados[2]),
+                    "totalNiveis": int(dados[3])
                 }
 
         return None
+
+    def listarLicoesPorIdioma(self, codIdiomaDesejado):
+        listaLicoes = []
+
+        def percorrerArvore(noAtual):
+            if noAtual is not None:
+                percorrerArvore(noAtual.esquerda)
+                licao = self.buscarLicao(noAtual.codigo)
+                if licao and licao['cod_idioma'] == codIdiomaDesejado:
+                    listaLicoes.append(licao)
+                percorrerArvore(noAtual.direita)
+
+        percorrerArvore(self.arvore.raiz)
+        return listaLicoes
