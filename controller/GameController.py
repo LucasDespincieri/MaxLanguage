@@ -30,9 +30,15 @@ class GameController:
 
         if pontosAtuais >= 100:
             nivelAtual += 1
-            pontosAtuais -= 100 # Reseta os pontos deduzindo os 100 gastos para subir de nível
+            pontosAtuais -= 100 
             mensagem += f"\n🎉 LEVEL UP! Você subiu para o Nível {nivelAtual}!"
 
+        totalNiveis = 5
+
+        if nivelAtual > totalNiveis:
+            mensagem = f"Prabéns! Você terminou todas as lições e garantiu seu certificado de proficiência em {exercicio['descricao']}"
+            self.tabelaUsuario.atualizarStatus(codUsuario, nivelAtual, pontosAtuais)
+            return mensagem
 
         self.tabelaUsuario.atualizarStatus(codUsuario, nivelAtual, pontosAtuais)
         return mensagem
@@ -45,8 +51,8 @@ class GameController:
 
         usuarios.sort(key=lambda u: u['pontuacao'], reverse=True)
 
-        rankingFormatado = "\n🏆 --- RANKING MAXLANGUAGE --- 🏆\n"
+        ranking_formatado = "\n🏆 --- RANKING MAXLANGUAGE --- 🏆\n"
         for posicao, usuario in enumerate(usuarios, start=1):
-            rankingFormatado += f"{posicao}º Lugar | {usuario['nome']} - Nível {usuario['nivel']} com {usuario['pontuacao']} XP\n"
+            ranking_formatado += f"{posicao}º Lugar | {usuario['nome']} - Nível {usuario['nivel']} com {usuario['pontuacao']} XP\n"
 
-        return rankingFormatado
+        return ranking_formatado
