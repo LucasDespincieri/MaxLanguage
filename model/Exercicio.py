@@ -75,3 +75,41 @@ class Exercicio:
                     "pontuacao": int(dados[7])
                 }
         return None
+
+    def buscarExercicioPorNivel(self, nivel_desejado):
+        exerciciosEncontrados = []
+
+        def varrerArvore(noAtual):
+            if noAtual is not None:
+                varrerArvore(noAtual.esquerda)
+
+                linha = self.arquivo.lerRegistro(noAtual.posicaoArquivo)
+                dados = linha.strip().split(';')
+
+                if len(dados) == 8:
+                    nivelDificuldade = int(dados[2])
+
+                    if nivelDificuldade == nivel_desejado:
+                        lista_opcoes = dados[5].split('|')
+
+                        exercicio = {
+                            "codigo": int(dados[0]),
+                            "codLicao": int(dados[1]),
+                            "nivelDificuldade": nivelDificuldade,
+                            "tipo": int(dados[3]),
+                            "descricao": dados[4],
+                            "opcoes": lista_opcoes,
+                            "respostaCorreta": dados[6],
+                            "pontuacao": int(dados[7])
+                        }
+                        exerciciosEncontrados.append(exercicio)
+
+                varrerArvore(noAtual.direita)
+
+        varrerArvore(self.arvore.raiz)
+
+        if exerciciosEncontrados:
+            import random
+            return random.choice(exerciciosEncontrados)
+
+        return None
