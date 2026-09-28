@@ -10,9 +10,8 @@ class Usuario:
         self.tabelaIdioma = tabelaIdioma
         self.carregarArvore()
 
-
     def carregarArvore(self):
-        with open (self.arquivo.caminhoArquivo, 'r', encoding='utf-8') as arquivo:
+        with open(self.arquivo.caminhoArquivo, 'r', encoding='utf-8') as arquivo:
             posicaoAtual = arquivo.tell()
             linha = arquivo.readline()
 
@@ -46,8 +45,6 @@ class Usuario:
 
         print(f"Usuario {nome} matriculado para o idioma {idiomaEscolhido['nome']} com sucesso")
 
-
-
     def buscarUsuario(self, codigo):
         noEncnotrado = self.arvore.buscar(codigo)
 
@@ -55,17 +52,23 @@ class Usuario:
             linha = self.arquivo.lerRegistro(noEncnotrado.posicaoArquivo)
             dados = linha.strip().split(";")
 
-            if len(dados) == 5:
+            if len(dados) == 3:
+                progresso = {}
+
+                if dados[2]:
+                    for d in dados[2].split('|'):
+                        if d:
+                            idIdioma, nivel, xp = p.split(';')
+                            progresso[int(idIdioma)] = {"nivel": int(nivel), "pontuaco": int(xp)}
+
                 return {
                     "codigo": int(dados[0]),
                     "nome": dados[1],
-                    "cod_idioma": int(dados[2]),
-                    "nivel": int(dados[3]),
-                    "pontuacao": int(dados[4])
+                    "progresso": progresso
                 }
             return None
 
-    def deletarUsuario(self, codigo):
+    def excluirUsuario(self, codigo):
 
         noEncontrado = self.arvore.buscar(codigo)
 
@@ -78,16 +81,23 @@ class Usuario:
 
         print("Idioma deletado com sucesso!")
 
-    def atualizarStatus(self, codigo, novoNivel, novaPontuacao):
+    def atualizarStatus(self, codigo, codIdioma, novoNivel, novaPontuacao):
         noEncontrado = self.arvore.buscar(codigo)
         usuarioAntigo = self.buscarUsuario(codigo)
 
         if noEncontrado is not None and usuarioAntigo is not None:
             self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
 
-            string = f"{codigo};{usuarioAntigo['nome']};{usuarioAntigo['cod_idioma']};{novoNivel};{novaPontuacao}"
-            novaPosicao = self.arquivo.gravarRegistro(string)
+            usuarioAntigo['progresso'][codIdioma] = {"nivel": novoNivel, "pontuacao": novaPontuacao}
 
+            progressoString = []
+            for idIdioma, dadosProgresso in usuarioAntigo['progresso'].items():
+                progressoString.append(f"{idIdioma}:{dadosProgresso['nivel']}:{dadosProgresso['pontucao']}")
+
+            progressoStringFinal = "|".join(progressoString)
+
+            string = f"{codigo};{usuarioAntigo['nome']};{progressoStringFinal}"
+            novaPosicao = self.arquivo.gravarRegistro(string)
             noEncontrado.posicaoArquivo = novaPosicao
 
     def listarTodosUsuarios(self):
