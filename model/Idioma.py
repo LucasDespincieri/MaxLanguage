@@ -1,63 +1,78 @@
 from model.Gerenciador import Gerenciador
 from model.ArvoreBinaria import ArvoreBinaria
 
+
 class Idioma:
 
-  def __init__(self):
+    def __init__(self):
 
-      self.arvore = ArvoreBinaria()
-      self.arquivo = Gerenciador("idioma.txt")
-      self.carregarArvore()
+        self.arvore = ArvoreBinaria()
+        self.arquivo = Gerenciador("idioma.txt")
+        self.carregarArvore()
 
-  def carregarArvore(self):
-      with open(self.arquivo.caminhoArquivo, 'r', encoding='utf-8') as arquivo:
-        posicaoAtual = arquivo.tell()
-        linha = arquivo.readline()
-
-        while linha:
-            dados = linha.strip().split(';')
-
-            if len(dados) >= 1 and dados[0].isdigit():
-                codigo = int(dados[0])
-                self.arvore.inserir(codigo, posicaoAtual)
-
+    def carregarArvore(self):
+        with open(self.arquivo.caminhoArquivo, 'r', encoding='utf-8') as arquivo:
             posicaoAtual = arquivo.tell()
             linha = arquivo.readline()
 
+            while linha:
+                dados = linha.strip().split(';')
 
-  def adicionarIdioma(self, codigo, nome):
+                if len(dados) >= 1 and dados[0].isdigit():
+                    codigo = int(dados[0])
+                    self.arvore.inserir(codigo, posicaoAtual)
 
-      if self.arvore.buscar(codigo) is not None:
-          print("codigo ja existe")
-          return
+                posicaoAtual = arquivo.tell()
+                linha = arquivo.readline()
 
-      linhaString = f"{codigo};{nome}"
-      posicao = self.arquivo.gravarRegistro(linhaString)
-      self.arvore.inserir(codigo,posicao)
-      print(f"Idioma {nome} adicionado")
+    def adicionarIdioma(self, codigo, nome):
 
-  def buscarIdioma(self,codigo):
+        if self.arvore.buscar(codigo) is not None:
+            print("codigo ja existe")
+            return
 
-      noEncontrado = self.arvore.buscar(codigo)
+        linhaString = f"{codigo};{nome}"
+        posicao = self.arquivo.gravarRegistro(linhaString)
+        self.arvore.inserir(codigo, posicao)
+        print(f"Idioma {nome} adicionado")
 
-      if noEncontrado is not None:
-          linha = self.arquivo.lerRegistro(noEncontrado.posicaoArquivo)
+    def buscarIdioma(self, codigo):
 
-          dados = linha.split(';')
-          if len(dados) == 2:
-              return {"codigo": int(dados[0]), "nome": dados[1]}
+        noEncontrado = self.arvore.buscar(codigo)
 
-      return None
+        if noEncontrado is not None:
+            linha = self.arquivo.lerRegistro(noEncontrado.posicaoArquivo)
 
-  def deletarIdioma(self, codigo):
+            dados = linha.split(';')
+            if len(dados) == 2:
+                return {"codigo": int(dados[0]), "nome": dados[1]}
 
-      noEncontrado = self.arvore.buscar(codigo)
+        return None
 
-      if noEncontrado is None:
-          print(f"Código informardo ({codigo}) não existe")
-          return
+    def deletarIdioma(self, codigo):
 
-      self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
-      self.arvore.excluirNo(codigo)
+        noEncontrado = self.arvore.buscar(codigo)
 
-      print("Idioma deletado com sucesso!")
+        if noEncontrado is None:
+            print(f"Código informardo ({codigo}) não existe")
+            return
+
+        self.arquivo.excluirRegistro(noEncontrado.posicaoArquivo)
+        self.arvore.excluirNo(codigo)
+
+        print("Idioma deletado com sucesso!")
+
+    def listarTodosIdiomas(self):
+        listaIdiomas = []
+
+        def percorrerArvore(noAtual):
+            if noAtual is not None:
+                percorrerArvore(noAtual.esquerda)
+                linha = self.arquivo.lerRegistro(noAtual.posicaoArquivo)
+                dados = linha.strip().split(';')
+                if len(dados) == 2:
+                    listaIdiomas.append({"codigo": int(dados[0]), "nome": dados[1]})
+                percorrerArvore(noAtual.direita)
+
+        percorrerArvore(self.arvore.raiz)
+        return listaIdiomas
