@@ -1,0 +1,182 @@
+import customtkinter as ctk
+
+
+class TelaMapaAluno(ctk.CTkFrame):
+    def __init__(self, master, app_router):
+        super().__init__(master, fg_color="transparent")
+        self.app_router = app_router
+        self.desenharMapa()
+
+    def limparFrame(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+
+    def desenharMapa(self):
+        self.limparFrame()
+        usuario = self.app_router.usuarioLogado
+        idiomaAtual = self.app_router.idiomaAtivo
+
+        progresso = usuario['progresso'].get(idiomaAtual, {"nivel": 1, "pontuacao": 0})
+        nivelAtualUsuario = progresso['nivel']
+        pontuacaoAtual = progresso['pontuacao']
+
+        frameStatus = ctk.CTkFrame(self, height=60, corner_radius=0)
+        frameStatus.pack(fill="x", side="top")
+
+        ctk.CTkLabel(frameStatus, text=f"👤 {usuario['nome']}", font=ctk.CTkFont(size=16, weight="bold")).pack(
+            side="left", padx=15, pady=15)
+
+        ctk.CTkLabel(frameStatus, text=f"⭐ Nível {nivelAtualUsuario} | ⚡ {pontuacaoAtual} XP",
+                     font=ctk.CTkFont(size=14)).pack(side="right", padx=15, pady=15)
+
+        mapaFrame = ctk.CTkScrollableFrame(self, fg_color="transparent")
+        mapaFrame.pack(fill="both", expand=True)
+
+        licoesDoIdioma = self.app_router.tabelaLicao.listarLicoesPorIdioma(idiomaAtual)
+
+        nivelGlobal = 1
+        deslocamentosX = [0, 60, 0, -60]
+
+        for indexLicao, licao in enumerate(licoesDoIdioma, start=1):
+            frameUnidade = ctk.CTkFrame(mapaFrame, fg_color="#58CC02", corner_radius=15)
+            frameUnidade.pack(fill="x", padx=20, pady=(20, 10))
+
+            ctk.CTkLabel(frameUnidade, text=f"Unidade {indexLicao}", font=ctk.CTkFont(size=22, weight="bold"),
+                         text_color="white").pack(anchor="w", padx=20, pady=(15, 0))
+            ctk.CTkLabel(frameUnidade, text=licao['titulo'], font=ctk.CTkFont(size=14), text_color="white").pack(
+                anchor="w", padx=20, pady=(0, 15))
+
+            for dificuldadeInterna in range(1, licao['totalNiveis'] + 1):
+                isDesbloqueado = nivelGlobal <= nivelAtualUsuario
+                isAtual = nivelGlobal == nivelAtualUsuario
+
+                corFundo = "#58CC02" if isDesbloqueado else "#E5E5E5"
+                corHover = "#46A302" if isDesbloqueado else "#E5E5E5"
+                corTexto = "white" if isDesbloqueado else "#AFAFAF"
+
+                if isAtual:
+                    textoBotao = "★"
+                elif isDesbloqueado:
+                    textoBotao = "✔"
+                else:
+                    textoBotao = "🔒"
+
+                linha = ctk.CTkFrame(mapaFrame, fg_color="transparent")
+                linha.pack(fill="x", pady=15)
+
+                btnFase = ctk.CTkButton(
+                    linha, text=textoBotao, width=75, height=75, corner_radius=40,
+                    font=ctk.CTkFont(size=28, weight="bold"),
+                    fg_color=corFundo, hover_color=corHover, text_color=corTexto,
+                    state="normal" if isDesbloqueado else "disabled",
+                    command=lambda l=licao['codigo'], d=dificuldadeInterna: self.iniciarPratica(l, d)
+                )
+
+                margem = deslocamentosX[(nivelGlobal - 1) % 4]
+                if margem > 0:
+                    btnFase.pack(padx=(margem, 0))
+                elif margem < 0:
+                    btnFase.pack(padx=(0, abs(margem)))
+                else:
+                    btnFase.pack()
+                nivelGlobal += 1
+
+        btnSair = ctk.CTkButton(mapaFrame, text="Trocar de Idioma", width=200, fg_color="transparent", border_width=2,
+                                text_color="gray", command=self.app_router.abrirSelecaoIdioma)
+        btnSair.pack(pady=30)
+
+    def iniciarPratica(self, codLicao, dificuldadeDesejada):
+        self.limparFrame()
+
+        exercicioAtual = self.app_router.tabelaExercicio.buscarExercicioPorNivelDificuldade(codLicao,
+                                                                                            dificuldadeDesejada)
+
+        if not exercicioAtual:
+            ctk.CTkLabel(self, text=f"Nenhum exercício cadastrado para a Lição {codLicao}, Fase {dificuldadeDesejada}!",
+                         text_color="red").pack(pady=50)
+            ctk.CTkButton(self, text="Voltar ao Mapa", command=self.desenharMapa).pack()
+            return
+
+        codigoExercicio = exercicioAtual['codigo']
+
+        frameTop = ctk.CTkFrame(self, fg_color="transparent")
+        frameTop.pack(fill="x", padx=20, pady=20)
+
+        ctk.CTkButton(frameTop, text="✖", width=40, height=40, fg_color="transparent", text_color="gray",
+                      hover_color="#333333", font=ctk.CTkFont(size=20), command=self.desenharMapa).pack(side="left")
+
+        barraProgresso = ctk.CTkProgressBar(frameTop, width=200, height=15, fg_color="#4B4B4B",
+                                            progress_color="#58CC02")
+        barraProgresso.pack(side="left", padx=20)
+        barraProgresso.set(0.5)
+
+        ctk.CTkLabel(self, text=f"Fase {dificuldadeDesejada}", font=ctk.CTkFont(size=14, weight="bold"),
+                     text_color="gray").pack(pady=(20, 0))
+
+        lblPergunta = ctk.CTkLabel(self, text=exercicioAtual['descricao'], font=ctk.CTkFont(size=24, weight="bold"),
+                                   wraplength=300)
+        lblPergunta.pack(pady=(10, 40))
+
+        for opcao in exercicioAtual['opcoes']:
+            ctk.CTkButton(
+                self, text=opcao, width=280, height=55, font=ctk.CTkFont(size=18), fg_color="green",
+                border_width=2, border_color="#4B4B4B", hover_color="#333333", anchor="w",
+                command=lambda resp=opcao, cod=codigoExercicio, cL=codLicao,
+                               dD=dificuldadeDesejada: self.verificar_resposta(cod, resp, cL, dD)
+            ).pack(pady=8)
+
+    def verificar_resposta(self, codExercicio, respostaEscolhida, codLicao, dificuldadeDesejada):
+        idiomaAtual = self.app_router.idiomaAtivo
+
+        progressoAntigo = self.app_router.usuarioLogado['progresso'].get(idiomaAtual, {"nivel": 1, "pontuacao": 0})
+        nivelAnterior = progressoAntigo['nivel']
+
+        mensagemResultado = self.app_router.gameController.praticar(
+            self.app_router.usuarioLogado['codigo'],
+            idiomaAtual,
+            codExercicio,
+            respostaEscolhida
+        )
+
+        self.app_router.usuarioLogado = self.app_router.tabelaUsuario.buscarUsuario(
+            self.app_router.usuarioLogado['codigo'])
+
+        progressoNovo = self.app_router.usuarioLogado['progresso'].get(idiomaAtual, {"nivel": 1, "pontuacao": 0})
+        subiuDeNivel = progressoNovo['nivel'] > nivelAnterior
+
+        isAcerto = "Parabéns" in mensagemResultado or "LEVEL" in mensagemResultado
+        corFundo = "#58CC02" if isAcerto else "#FF4B4B"
+
+        popUp = ctk.CTkToplevel(self)
+        popUp.title("Resultado")
+        popUp.geometry("340x260")
+        popUp.resizable(False, False)
+        popUp.transient(self)
+        popUp.grab_set()
+
+        framePopUp = ctk.CTkFrame(popUp, fg_color=corFundo, corner_radius=0)
+        framePopUp.pack(fill="both", expand=True)
+
+        lblMensagem = ctk.CTkLabel(framePopUp, text=mensagemResultado, font=ctk.CTkFont(size=18, weight="bold"),
+                                   text_color="white", wraplength=300)
+        lblMensagem.pack(pady=(40, 20), padx=20)
+
+        def voltarAoMapa():
+            popUp.destroy()
+            self.desenharMapa()
+
+        def proximaPergunta():
+            popUp.destroy()
+            self.iniciarPratica(codLicao, dificuldadeDesejada)
+
+        if subiuDeNivel:
+            ctk.CTkButton(framePopUp, text="VOLTAR AO MAPA", width=220, height=45, fg_color="white",
+                          text_color=corFundo, font=ctk.CTkFont(size=16, weight="bold"), hover_color="#F0F0F0",
+                          command=voltarAoMapa).pack(pady=10)
+        else:
+            ctk.CTkButton(framePopUp, text="PRÓXIMA PERGUNTA", width=220, height=45, fg_color="white",
+                          text_color=corFundo, font=ctk.CTkFont(size=16, weight="bold"), hover_color="#F0F0F0",
+                          command=proximaPergunta).pack(pady=(0, 10))
+            ctk.CTkButton(framePopUp, text="PARAR POR AGORA", width=220, height=35, fg_color="transparent",
+                          text_color="white", font=ctk.CTkFont(size=14, weight="bold"), border_width=2,
+                          border_color="white", hover_color=corFundo, command=voltarAoMapa).pack(pady=5)

@@ -58,8 +58,8 @@ class Usuario:
                 if dados[2]:
                     for d in dados[2].split('|'):
                         if d:
-                            idIdioma, nivel, xp = p.split(';')
-                            progresso[int(idIdioma)] = {"nivel": int(nivel), "pontuaco": int(xp)}
+                            idIdioma, nivel, xp = d.split(':')
+                            progresso[int(idIdioma)] = {"nivel": int(nivel), "pontuacao": int(xp)}
 
                 return {
                     "codigo": int(dados[0]),
@@ -92,7 +92,7 @@ class Usuario:
 
             progressoString = []
             for idIdioma, dadosProgresso in usuarioAntigo['progresso'].items():
-                progressoString.append(f"{idIdioma}:{dadosProgresso['nivel']}:{dadosProgresso['pontucao']}")
+                progressoString.append(f"{idIdioma}:{dadosProgresso['nivel']}:{dadosProgresso['pontuacao']}")
 
             progressoStringFinal = "|".join(progressoString)
 

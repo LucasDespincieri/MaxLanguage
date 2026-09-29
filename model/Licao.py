@@ -67,7 +67,7 @@ class Licao:
             if noAtual is not None:
                 percorrerArvore(noAtual.esquerda)
                 licao = self.buscarLicao(noAtual.codigo)
-                if licao and licao['cod_idioma'] == codIdiomaDesejado:
+                if licao and licao['codIdioma'] == codIdiomaDesejado:
                     listaLicoes.append(licao)
                 percorrerArvore(noAtual.direita)
 

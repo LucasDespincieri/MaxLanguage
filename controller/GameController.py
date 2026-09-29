@@ -4,7 +4,7 @@ class GameController:
         self.tabelaExercicio = tabelaExercicio
         self.tabelaLicao = tabelaLicao
 
-    def praticar(self, codUsuario, codExercicio, respostaDada):
+    def praticar(self, codUsuario, codIdioma, codExercicio, respostaDada):
         usuario = self.tabelaUsuario.buscarUsuario(codUsuario)
         exercicio = self.tabelaExercicio.buscarExercicio(codExercicio)
 
@@ -13,11 +13,12 @@ class GameController:
         if not exercicio:
             return "Erro: Exercício não encontrado."
 
-        if exercicio['nivelDificuldade'] > usuario['nivel']:
-            return f"Bloqueado! Este exercício é Nível {exercicio['nivelDificuldade']}, mas você é Nível {usuario['nivel']}."
+        progressoAtual = usuario['progresso'].get(codIdioma, {"nivel": 1, "pontuacao": 0})
+        nivelAtual = progressoAtual['nivel']
+        pontosAtuais = progressoAtual['pontuacao']
 
-        nivelAtual = usuario['nivel']
-        pontosAtuais = usuario['pontuacao']
+        if exercicio['nivelDificuldade'] > nivelAtual:
+            return f"Bloqueado! Este exercício é Nível {exercicio['nivelDificuldade']}, mas você é Nível {nivelAtual} neste idioma."
 
         if respostaDada.lower().strip() == exercicio['respostaCorreta'].lower().strip():
             pontosAtuais += exercicio['pontuacao']
@@ -30,17 +31,17 @@ class GameController:
 
         if pontosAtuais >= 100:
             nivelAtual += 1
-            pontosAtuais -= 100 
+            pontosAtuais -= 100
             mensagem += f"\n🎉 LEVEL UP! Você subiu para o Nível {nivelAtual}!"
 
         totalNiveis = 5
 
         if nivelAtual > totalNiveis:
-            mensagem = f"Prabéns! Você terminou todas as lições e garantiu seu certificado de proficiência em {exercicio['descricao']}"
-            self.tabelaUsuario.atualizarStatus(codUsuario, nivelAtual, pontosAtuais)
+            mensagem = "Parabéns! Você terminou todas as lições e garantiu seu certificado de proficiência!"
+            self.tabelaUsuario.atualizarStatus(codUsuario, codIdioma, nivelAtual, pontosAtuais)
             return mensagem
 
-        self.tabelaUsuario.atualizarStatus(codUsuario, nivelAtual, pontosAtuais)
+        self.tabelaUsuario.atualizarStatus(codUsuario, codIdioma, nivelAtual, pontosAtuais)
         return mensagem
 
     def gerarRanking(self):
@@ -49,10 +50,17 @@ class GameController:
         if not usuarios:
             return "Nenhum usuário cadastrado no momento."
 
-        usuarios.sort(key=lambda u: u['pontuacao'], reverse=True)
+        def calcular_xp_total(user):
+            xp_total = 0
+            for prog in user['progressos'].values():
+                xp_total += (prog['nivel'] - 1) * 100 + prog['pontuacao']
+            return xp_total
 
-        ranking_formatado = "\n🏆 --- RANKING MAXLANGUAGE --- 🏆\n"
+        usuarios.sort(key=calcular_xp_total, reverse=True)
+
+        ranking_formatado = "\n🏆 --- RANKING GLOBAL MAXLANGUAGE --- 🏆\n"
         for posicao, usuario in enumerate(usuarios, start=1):
-            ranking_formatado += f"{posicao}º Lugar | {usuario['nome']} - Nível {usuario['nivel']} com {usuario['pontuacao']} XP\n"
+            xp_total = calcular_xp_total(usuario)
+            ranking_formatado += f"{posicao}º Lugar | {usuario['nome']} - {xp_total} XP Total\n"
 
         return ranking_formatado

@@ -76,7 +76,7 @@ class Exercicio:
                 }
         return None
 
-    def buscarExercicioPorNivel(self, nivel_desejado):
+    def buscarExercicioPorNivelDificuldade(self, codLicao, nivelDificuldadeDesejado):
         exerciciosEncontrados = []
 
         def percorrerArvore(noAtual):
@@ -88,10 +88,10 @@ class Exercicio:
 
                 if len(dados) == 8:
                     nivelDificuldade = int(dados[2])
+                    codLicaotxt = int(dados[1])
 
-                    if nivelDificuldade == nivel_desejado:
+                    if codLicaotxt == codLicao and nivelDificuldadeDesejado == nivelDificuldade:
                         lista_opcoes = dados[5].split('|')
-
                         exercicio = {
                             "codigo": int(dados[0]),
                             "codLicao": int(dados[1]),
