@@ -65,14 +65,14 @@ class Exercicio:
                 lista_opcoes = dados[5].split('|')
 
                 return {
-                    "codigo": int(dados[0]),
-                    "codLicao": int(dados[1]),
-                    "nivelDificuldade": int(dados[2]),
-                    "tipo": int(dados[3]),
+                    "codigo": int(dados[0]) if dados[0].isdigit() else 0,
+                    "codLicao": int(dados[1]) if dados[1].isdigit() else 0,
+                    "nivelDificuldade": int(dados[2]) if dados[2].isdigit() else 1,
+                    "tipo": int(dados[3]) if dados[3].isdigit() else 1,
                     "descricao": dados[4],
                     "opcoes": lista_opcoes,
                     "respostaCorreta": dados[6],
-                    "pontuacao": int(dados[7])
+                    "pontuacao": int(dados[7]) if dados[7].isdigit() else 0
                 }
         return None
 
@@ -87,20 +87,20 @@ class Exercicio:
                 dados = linha.strip().split(';')
 
                 if len(dados) == 8:
-                    nivelDificuldade = int(dados[2])
-                    codLicaotxt = int(dados[1])
+                    nivelDificuldade = int(dados[2]) if dados[2].isdigit() else 1
+                    codLicaotxt = int(dados[1]) if dados[1].isdigit() else 0
 
                     if codLicaotxt == codLicao and nivelDificuldadeDesejado == nivelDificuldade:
                         lista_opcoes = dados[5].split('|')
                         exercicio = {
-                            "codigo": int(dados[0]),
-                            "codLicao": int(dados[1]),
+                            "codigo": int(dados[0]) if dados[0].isdigit() else 0,
+                            "codLicao": codLicaotxt,
                             "nivelDificuldade": nivelDificuldade,
-                            "tipo": int(dados[3]),
+                            "tipo": int(dados[3]) if dados[3].isdigit() else 1,
                             "descricao": dados[4],
                             "opcoes": lista_opcoes,
                             "respostaCorreta": dados[6],
-                            "pontuacao": int(dados[7])
+                            "pontuacao": int(dados[7]) if dados[7].isdigit() else 0
                         }
                         exerciciosEncontrados.append(exercicio)
 
