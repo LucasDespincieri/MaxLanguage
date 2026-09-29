@@ -44,23 +44,23 @@ class GameController:
         self.tabelaUsuario.atualizarStatus(codUsuario, codIdioma, nivelAtual, pontosAtuais)
         return mensagem
 
-    def gerarRanking(self):
+    def gerarRankingPorIdioma(self, codIdioma, nomeIdioma):
         usuarios = self.tabelaUsuario.listarTodosUsuarios()
 
         if not usuarios:
-            return "Nenhum usuário cadastrado no momento."
+            return []
 
-        def calcular_xp_total(user):
-            xp_total = 0
-            for prog in user['progressos'].values():
-                xp_total += (prog['nivel'] - 1) * 100 + prog['pontuacao']
-            return xp_total
+        usuariosIdioma = []
+        for usuario in usuarios:
+            # Pega o progresso do usuário no idioma específico
+            progresso = usuario.get('progresso', {}).get(codIdioma)
+            if progresso:
+                xpTotal = (progresso['nivel'] - 1) * 100 + progresso['pontuacao']
+                usuariosIdioma.append({
+                    'nome': usuario['nome'],
+                    'xp_total': xpTotal
+                })
 
-        usuarios.sort(key=calcular_xp_total, reverse=True)
+        usuariosIdioma.sort(key=lambda x: x['xp_total'], reverse=True)
 
-        ranking_formatado = "\n🏆 --- RANKING GLOBAL MAXLANGUAGE --- 🏆\n"
-        for posicao, usuario in enumerate(usuarios, start=1):
-            xp_total = calcular_xp_total(usuario)
-            ranking_formatado += f"{posicao}º Lugar | {usuario['nome']} - {xp_total} XP Total\n"
-
-        return ranking_formatado
+        return usuariosIdioma
