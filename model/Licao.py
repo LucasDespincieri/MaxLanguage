@@ -52,10 +52,10 @@ class Licao:
 
             if len(dados) == 4:
                 return {
-                    "codigo": int(dados[0]),
+                    "codigo": int(dados[0]) if dados[0].isdigit() else 0,
                     "titulo": dados[1],
-                    "codIdioma": int(dados[2]),
-                    "totalNiveis": int(dados[3])
+                    "codIdioma": int(dados[2]) if dados[2].isdigit() else 0,
+                    "totalNiveis": int(dados[3]) if dados[3].isdigit() else 1
                 }
 
         return None
