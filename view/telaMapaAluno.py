@@ -118,15 +118,71 @@ class TelaMapaAluno(ctk.CTkFrame):
 
         lblPergunta = ctk.CTkLabel(self, text=exercicioAtual['descricao'], font=ctk.CTkFont(size=24, weight="bold"),
                                    wraplength=300)
-        lblPergunta.pack(pady=(10, 40))
+        lblPergunta.pack(pady=(10, 20))
 
-        for opcao in exercicioAtual['opcoes']:
+        tipoExercicio = exercicioAtual.get('tipo', 1)
+
+        if tipoExercicio == 1:
+            for opcao in exercicioAtual['opcoes']:
+                ctk.CTkButton(
+                    self, text=opcao, width=280, height=55, font=ctk.CTkFont(size=18), fg_color="green",
+                    border_width=2, border_color="#4B4B4B", hover_color="#333333", anchor="w",
+                    command=lambda resp=opcao, cod=codigoExercicio, cL=codLicao,
+                                   dD=dificuldadeDesejada: self.verificar_resposta(cod, resp, cL, dD)
+                ).pack(pady=8)
+
+        elif tipoExercicio == 2:
+            entradaResposta = ctk.CTkEntry(self, width=280, height=45, font=ctk.CTkFont(size=16),
+                                           placeholder_text="Digite aqui...")
+            entradaResposta.pack(pady=15)
+
             ctk.CTkButton(
-                self, text=opcao, width=280, height=55, font=ctk.CTkFont(size=18), fg_color="green",
-                border_width=2, border_color="#4B4B4B", hover_color="#333333", anchor="w",
-                command=lambda resp=opcao, cod=codigoExercicio, cL=codLicao,
-                               dD=dificuldadeDesejada: self.verificar_resposta(cod, resp, cL, dD)
-            ).pack(pady=8)
+                self, text="VERIFICAR", width=280, height=50, font=ctk.CTkFont(size=16, weight="bold"),
+                fg_color="#58CC02",
+                command=lambda: self.verificar_resposta(codigoExercicio, entradaResposta.get(), codLicao,
+                                                        dificuldadeDesejada)
+            ).pack(pady=10)
+
+        elif tipoExercicio == 3:
+
+            import random
+            pares = []
+            colunaEsq = []
+            colunaDir = []
+
+            for par in exercicioAtual['opcoes']:
+                if '=' in par:
+                    esq, dir = par.split('=')
+                    pares.append((esq.strip(), dir.strip()))
+                    colunaEsq.append(esq.strip())
+                    colunaDir.append(dir.strip())
+
+            random.shuffle(colunaDir)
+            comboboxes = []
+
+            for esq in colunaEsq:
+                frameLinha = ctk.CTkFrame(self, fg_color="transparent")
+                frameLinha.pack(pady=5)
+                ctk.CTkLabel(frameLinha, text=esq, width=120, font=ctk.CTkFont(size=16, weight="bold"),
+                             anchor="e").pack(side="left", padx=10)
+
+                combo = ctk.CTkComboBox(frameLinha, values=colunaDir, width=150, state="readonly")
+                combo.set("Selecione")
+                combo.pack(side="left", padx=10)
+                comboboxes.append((esq, combo))
+
+            def validarLigar():
+                respostas = []
+                for esq, combo in comboboxes:
+                    respostas.append(f"{esq}={combo.get()}")
+                respostaFinal = "|".join(respostas)
+                self.verificar_resposta(codigoExercicio, respostaFinal, codLicao, dificuldadeDesejada)
+
+            ctk.CTkButton(
+                self, text="VERIFICAR", width=280, height=50, font=ctk.CTkFont(size=16, weight="bold"),
+                fg_color="#58CC02",
+                command=validarLigar
+            ).pack(pady=20)
 
     def verificar_resposta(self, codExercicio, respostaEscolhida, codLicao, dificuldadeDesejada):
         idiomaAtual = self.app_router.idiomaAtivo
@@ -201,28 +257,33 @@ class TelaMapaAluno(ctk.CTkFrame):
         framePopUp = ctk.CTkFrame(popUp, corner_radius=0)
         framePopUp.pack(fill="both", expand=True)
 
-        lblTitulo = ctk.CTkLabel(framePopUp, text=f"🏆 Ranking: {nomeIdioma} 🏆", font=ctk.CTkFont(size=20, weight="bold"))
+        lblTitulo = ctk.CTkLabel(framePopUp, text=f"🏆 Ranking: {nomeIdioma} 🏆",
+                                 font=ctk.CTkFont(size=20, weight="bold"))
         lblTitulo.pack(pady=(20, 10))
 
         scrollRanking = ctk.CTkScrollableFrame(framePopUp, width=360, height=360, fg_color="transparent")
         scrollRanking.pack(padx=20, pady=10, fill="both", expand=True)
 
         if not ranking_dados:
-            ctk.CTkLabel(scrollRanking, text="Nenhum usuário possui progresso neste idioma.", font=ctk.CTkFont(size=14)).pack(pady=20)
+            ctk.CTkLabel(scrollRanking, text="Nenhum usuário possui progresso neste idioma.",
+                         font=ctk.CTkFont(size=14)).pack(pady=20)
         else:
             for posicao, usuario in enumerate(ranking_dados, start=1):
                 iconePosicao = "🥇" if posicao == 1 else "🥈" if posicao == 2 else "🥉" if posicao == 3 else f"{posicao}º"
-                
+
                 frameItem = ctk.CTkFrame(scrollRanking, fg_color="#58CC02", corner_radius=15)
                 frameItem.pack(fill="x", pady=(0, 10))
 
-                lblPos = ctk.CTkLabel(frameItem, text=iconePosicao, font=ctk.CTkFont(size=20, weight="bold"), text_color="white", width=40)
+                lblPos = ctk.CTkLabel(frameItem, text=iconePosicao, font=ctk.CTkFont(size=20, weight="bold"),
+                                      text_color="white", width=40)
                 lblPos.pack(side="left", padx=(15, 5), pady=15)
 
-                lblNome = ctk.CTkLabel(frameItem, text=usuario['nome'], font=ctk.CTkFont(size=16, weight="bold"), text_color="white")
+                lblNome = ctk.CTkLabel(frameItem, text=usuario['nome'], font=ctk.CTkFont(size=16, weight="bold"),
+                                       text_color="white")
                 lblNome.pack(side="left", padx=5, pady=15)
 
-                lblXp = ctk.CTkLabel(frameItem, text=f"{usuario['xp_total']} XP", font=ctk.CTkFont(size=14, weight="bold"), text_color="white")
+                lblXp = ctk.CTkLabel(frameItem, text=f"{usuario['xp_total']} XP",
+                                     font=ctk.CTkFont(size=14, weight="bold"), text_color="white")
                 lblXp.pack(side="right", padx=15, pady=15)
 
         ctk.CTkButton(framePopUp, text="Fechar", width=120, command=popUp.destroy).pack(pady=(10, 20))

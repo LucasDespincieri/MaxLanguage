@@ -59,10 +59,10 @@ class Usuario:
                     for d in dados[2].split('|'):
                         if d:
                             idIdioma, nivel, xp = d.split(':')
-                            progresso[int(idIdioma)] = {"nivel": int(nivel), "pontuacao": int(xp)}
+                            progresso[int(idIdioma) if idIdioma.isdigit() else 0] = {"nivel": int(nivel) if nivel.isdigit() else 1, "pontuacao": int(xp) if xp.isdigit() else 0}
 
                 return {
-                    "codigo": int(dados[0]),
+                    "codigo": int(dados[0]) if dados[0].isdigit() else 0,
                     "nome": dados[1],
                     "progresso": progresso
                 }
