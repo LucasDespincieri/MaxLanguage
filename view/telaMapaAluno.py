@@ -29,6 +29,9 @@ class TelaMapaAluno(ctk.CTkFrame):
         ctk.CTkLabel(frameStatus, text=f"⭐ Nível {nivelAtualUsuario} | ⚡ {pontuacaoAtual} XP",
                      font=ctk.CTkFont(size=14)).pack(side="right", padx=15, pady=15)
 
+        btnRanking = ctk.CTkButton(frameStatus, text="🏆 Ranking", width=100, command=self.mostrarRanking)
+        btnRanking.pack(side="right", padx=15, pady=15)
+
         mapaFrame = ctk.CTkScrollableFrame(self, fg_color="transparent")
         mapaFrame.pack(fill="both", expand=True)
 
@@ -180,3 +183,46 @@ class TelaMapaAluno(ctk.CTkFrame):
             ctk.CTkButton(framePopUp, text="PARAR POR AGORA", width=220, height=35, fg_color="transparent",
                           text_color="white", font=ctk.CTkFont(size=14, weight="bold"), border_width=2,
                           border_color="white", hover_color=corFundo, command=voltarAoMapa).pack(pady=5)
+
+    def mostrarRanking(self):
+        idiomaAtual = self.app_router.idiomaAtivo
+        idiomaObjeto = self.app_router.tabelaIdioma.buscarIdioma(idiomaAtual)
+        nomeIdioma = idiomaObjeto['nome'] if idiomaObjeto else "Desconhecido"
+
+        ranking_dados = self.app_router.gameController.gerarRankingPorIdioma(idiomaAtual, nomeIdioma)
+
+        popUp = ctk.CTkToplevel(self)
+        popUp.title(f"Ranking - {nomeIdioma}")
+        popUp.geometry("400x500")
+        popUp.resizable(False, False)
+        popUp.transient(self)
+        popUp.grab_set()
+
+        framePopUp = ctk.CTkFrame(popUp, corner_radius=0)
+        framePopUp.pack(fill="both", expand=True)
+
+        lblTitulo = ctk.CTkLabel(framePopUp, text=f"🏆 Ranking: {nomeIdioma} 🏆", font=ctk.CTkFont(size=20, weight="bold"))
+        lblTitulo.pack(pady=(20, 10))
+
+        scrollRanking = ctk.CTkScrollableFrame(framePopUp, width=360, height=360, fg_color="transparent")
+        scrollRanking.pack(padx=20, pady=10, fill="both", expand=True)
+
+        if not ranking_dados:
+            ctk.CTkLabel(scrollRanking, text="Nenhum usuário possui progresso neste idioma.", font=ctk.CTkFont(size=14)).pack(pady=20)
+        else:
+            for posicao, usuario in enumerate(ranking_dados, start=1):
+                iconePosicao = "🥇" if posicao == 1 else "🥈" if posicao == 2 else "🥉" if posicao == 3 else f"{posicao}º"
+                
+                frameItem = ctk.CTkFrame(scrollRanking, fg_color="#58CC02", corner_radius=15)
+                frameItem.pack(fill="x", pady=(0, 10))
+
+                lblPos = ctk.CTkLabel(frameItem, text=iconePosicao, font=ctk.CTkFont(size=20, weight="bold"), text_color="white", width=40)
+                lblPos.pack(side="left", padx=(15, 5), pady=15)
+
+                lblNome = ctk.CTkLabel(frameItem, text=usuario['nome'], font=ctk.CTkFont(size=16, weight="bold"), text_color="white")
+                lblNome.pack(side="left", padx=5, pady=15)
+
+                lblXp = ctk.CTkLabel(frameItem, text=f"{usuario['xp_total']} XP", font=ctk.CTkFont(size=14, weight="bold"), text_color="white")
+                lblXp.pack(side="right", padx=15, pady=15)
+
+        ctk.CTkButton(framePopUp, text="Fechar", width=120, command=popUp.destroy).pack(pady=(10, 20))
