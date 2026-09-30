@@ -40,14 +40,14 @@ class TelaMapaAluno(ctk.CTkFrame):
 
         if nivelAtualUsuario > nivelMaximoIdioma:
             btnCertificado = ctk.CTkButton(
-                mapaFrame, 
-                text="🎓 Baixar Certificado", 
-                width=280, 
-                height=50, 
-                fg_color="#FFD700", 
-                text_color="black", 
+                mapaFrame,
+                text="🎓 Baixar Certificado",
+                width=280,
+                height=50,
+                fg_color="#FFD700",
+                text_color="black",
                 font=ctk.CTkFont(size=18, weight="bold"),
-                hover_color="#E6C200", 
+                hover_color="#E6C200",
                 command=self.baixarCertificado
             )
             btnCertificado.pack(pady=(20, 10))
@@ -102,6 +102,30 @@ class TelaMapaAluno(ctk.CTkFrame):
         btnSair = ctk.CTkButton(mapaFrame, text="Trocar de Idioma", width=200, fg_color="transparent", border_width=2,
                                 text_color="gray", command=self.app_router.abrirSelecaoIdioma)
         btnSair.pack(pady=30)
+
+        btnExcluir = ctk.CTkButton(mapaFrame, text="Excluir Minha Conta", width=200, fg_color="#FF4B4B",
+                                   hover_color="#D13A3A", command=self.confirmarExclusaoConta)
+        btnExcluir.pack(pady=(0, 30))
+
+    def confirmarExclusaoConta(self):
+        popUp = ctk.CTkToplevel(self)
+        popUp.title("Aviso Importante")
+        popUp.geometry("340x200")
+        popUp.transient(self)
+        popUp.grab_set()
+
+        ctk.CTkLabel(popUp, text="Tem certeza de que deseja apagar a sua conta?",
+                     font=ctk.CTkFont(size=14, weight="bold"), text_color="red", wraplength=300).pack(pady=(30, 20))
+
+        def executarExclusao():
+            codUsuario = self.app_router.usuarioLogado['codigo']
+            self.app_router.tabelaUsuario.excluirUsuario(codUsuario)
+            popUp.destroy()
+            self.app_router.abrirTelaLogin()  # Volta ao início
+
+        ctk.CTkButton(popUp, text="Sim, apagar conta", fg_color="red", hover_color="#D13A3A",
+                      command=executarExclusao).pack(pady=5)
+        ctk.CTkButton(popUp, text="Cancelar", fg_color="gray", command=popUp.destroy).pack(pady=5)
 
     def iniciarPratica(self, codLicao, dificuldadeDesejada):
         self.limparFrame()
@@ -322,18 +346,20 @@ class TelaMapaAluno(ctk.CTkFrame):
         </svg>"""
 
         caminho_arquivo = f"certificado_{nomeUsuario}_{nomeIdioma}.svg".replace(" ", "_")
-        
+
         with open(caminho_arquivo, "w", encoding="utf-8") as f:
             f.write(conteudo_svg)
-        
+
         caminho_absoluto = os.path.abspath(caminho_arquivo)
-        
+
         popUp = ctk.CTkToplevel(self)
         popUp.title("Sucesso")
         popUp.geometry("500x200")
         popUp.transient(self)
         popUp.grab_set()
-        
-        ctk.CTkLabel(popUp, text="Certificado gerado com sucesso!", font=ctk.CTkFont(size=20, weight="bold"), text_color="#58CC02").pack(pady=(20, 10))
-        ctk.CTkLabel(popUp, text=f"Salvo em:\n{caminho_absoluto}", font=ctk.CTkFont(size=12), wraplength=450).pack(pady=5)
+
+        ctk.CTkLabel(popUp, text="Certificado gerado com sucesso!", font=ctk.CTkFont(size=20, weight="bold"),
+                     text_color="#58CC02").pack(pady=(20, 10))
+        ctk.CTkLabel(popUp, text=f"Salvo em:\n{caminho_absoluto}", font=ctk.CTkFont(size=12), wraplength=450).pack(
+            pady=5)
         ctk.CTkButton(popUp, text="OK", command=popUp.destroy, width=120).pack(pady=15)
