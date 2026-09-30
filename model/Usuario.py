@@ -25,25 +25,15 @@ class Usuario:
                 posicaoAtual = arquivo.tell()
                 linha = arquivo.readline()
 
-    def adicionarUsuario(self, codigo, nome, codIdioma):
+    def adicionarUsuario(self, codigo, nome):
         if self.arvore.buscar(codigo) is not None:
-            print(f"codigo inserido ({codigo}) já existe na tabela de usuário")
-            return
+            return False, "Este ID já está em uso. Por favor, escolha outro."
 
-        idiomaEscolhido = self.tabelaIdioma.buscarIdioma(codIdioma)
-
-        if idiomaEscolhido is None:
-            print(f"codigo inserido({codIdioma}) não pertence a nenhum idioma")
-            return
-
-        nivel = 1
-        pontuacaoXP = 0
-
-        string = f"{codigo};{nome};{codIdioma};{nivel};{pontuacaoXP}"
+        string = f"{codigo};{nome};"
         posicao = self.arquivo.gravarRegistro(string)
         self.arvore.inserir(codigo, posicao)
 
-        print(f"Usuario {nome} matriculado para o idioma {idiomaEscolhido['nome']} com sucesso")
+        return True, "Conta criada com sucesso!"
 
     def buscarUsuario(self, codigo):
         noEncnotrado = self.arvore.buscar(codigo)
@@ -59,7 +49,9 @@ class Usuario:
                     for d in dados[2].split('|'):
                         if d:
                             idIdioma, nivel, xp = d.split(':')
-                            progresso[int(idIdioma) if idIdioma.isdigit() else 0] = {"nivel": int(nivel) if nivel.isdigit() else 1, "pontuacao": int(xp) if xp.isdigit() else 0}
+                            progresso[int(idIdioma) if idIdioma.isdigit() else 0] = {
+                                "nivel": int(nivel) if nivel.isdigit() else 1,
+                                "pontuacao": int(xp) if xp.isdigit() else 0}
 
                 return {
                     "codigo": int(dados[0]) if dados[0].isdigit() else 0,

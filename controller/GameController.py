@@ -34,7 +34,8 @@ class GameController:
             pontosAtuais -= 100
             mensagem += f"\n🎉 LEVEL UP! Você subiu para o Nível {nivelAtual}!"
 
-        totalNiveis = 5
+        licoesDoIdioma = self.tabelaLicao.listarLicoesPorIdioma(codIdioma)
+        totalNiveis = sum(licao['totalNiveis'] for licao in licoesDoIdioma) if licoesDoIdioma else 999
 
         if nivelAtual > totalNiveis:
             mensagem = "Parabéns! Você terminou todas as lições e garantiu seu certificado de proficiência!"
@@ -52,7 +53,6 @@ class GameController:
 
         usuariosIdioma = []
         for usuario in usuarios:
-            # Pega o progresso do usuário no idioma específico
             progresso = usuario.get('progresso', {}).get(codIdioma)
             if progresso:
                 xpTotal = (progresso['nivel'] - 1) * 100 + progresso['pontuacao']
