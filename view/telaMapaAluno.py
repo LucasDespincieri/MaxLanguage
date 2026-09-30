@@ -36,6 +36,21 @@ class TelaMapaAluno(ctk.CTkFrame):
         mapaFrame.pack(fill="both", expand=True)
 
         licoesDoIdioma = self.app_router.tabelaLicao.listarLicoesPorIdioma(idiomaAtual)
+        nivelMaximoIdioma = sum(licao['totalNiveis'] for licao in licoesDoIdioma) if licoesDoIdioma else 999
+
+        if nivelAtualUsuario > nivelMaximoIdioma:
+            btnCertificado = ctk.CTkButton(
+                mapaFrame, 
+                text="🎓 Baixar Certificado", 
+                width=280, 
+                height=50, 
+                fg_color="#FFD700", 
+                text_color="black", 
+                font=ctk.CTkFont(size=18, weight="bold"),
+                hover_color="#E6C200", 
+                command=self.baixarCertificado
+            )
+            btnCertificado.pack(pady=(20, 10))
 
         nivelGlobal = 1
         deslocamentosX = [0, 60, 0, -60]
@@ -287,3 +302,38 @@ class TelaMapaAluno(ctk.CTkFrame):
                 lblXp.pack(side="right", padx=15, pady=15)
 
         ctk.CTkButton(framePopUp, text="Fechar", width=120, command=popUp.destroy).pack(pady=(10, 20))
+
+    def baixarCertificado(self):
+        import os
+        idiomaAtual = self.app_router.idiomaAtivo
+        idiomaObjeto = self.app_router.tabelaIdioma.buscarIdioma(idiomaAtual)
+        nomeIdioma = idiomaObjeto['nome'] if idiomaObjeto else "Desconhecido"
+        nomeUsuario = self.app_router.usuarioLogado['nome']
+
+        conteudo_svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+            <rect width="100%" height="100%" fill="#f4f4f9" />
+            <rect x="20" y="20" width="760" height="560" fill="none" stroke="#58CC02" stroke-width="10" />
+            <text x="400" y="150" font-family="Arial" font-size="40" font-weight="bold" fill="#333" text-anchor="middle">Certificado de Proficiência</text>
+            <text x="400" y="250" font-family="Arial" font-size="24" fill="#555" text-anchor="middle">Certificamos que</text>
+            <text x="400" y="320" font-family="Arial" font-size="45" font-weight="bold" fill="#58CC02" text-anchor="middle">{nomeUsuario}</text>
+            <text x="400" y="400" font-family="Arial" font-size="24" fill="#555" text-anchor="middle">concluiu com êxito o curso completo de</text>
+            <text x="400" y="460" font-family="Arial" font-size="35" font-weight="bold" fill="#333" text-anchor="middle">{nomeIdioma}</text>
+            <text x="400" y="530" font-family="Arial" font-size="20" fill="#777" text-anchor="middle">MaxLanguage</text>
+        </svg>"""
+
+        caminho_arquivo = f"certificado_{nomeUsuario}_{nomeIdioma}.svg".replace(" ", "_")
+        
+        with open(caminho_arquivo, "w", encoding="utf-8") as f:
+            f.write(conteudo_svg)
+        
+        caminho_absoluto = os.path.abspath(caminho_arquivo)
+        
+        popUp = ctk.CTkToplevel(self)
+        popUp.title("Sucesso")
+        popUp.geometry("500x200")
+        popUp.transient(self)
+        popUp.grab_set()
+        
+        ctk.CTkLabel(popUp, text="Certificado gerado com sucesso!", font=ctk.CTkFont(size=20, weight="bold"), text_color="#58CC02").pack(pady=(20, 10))
+        ctk.CTkLabel(popUp, text=f"Salvo em:\n{caminho_absoluto}", font=ctk.CTkFont(size=12), wraplength=450).pack(pady=5)
+        ctk.CTkButton(popUp, text="OK", command=popUp.destroy, width=120).pack(pady=15)
