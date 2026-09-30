@@ -5,11 +5,11 @@ from model.Exercicio import Exercicio
 from model.Usuario import Usuario
 from controller.GameController import GameController
 
-# Importando as telas da pasta view
 from view.telaLogin import TelaLogin
 from view.telaIdioma import TelaIdioma
 from view.telaMapaAluno import TelaMapaAluno
 from view.telaAdmin import TelaAdmin
+from view.telaRegistro import TelaRegistro
 
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("green")
@@ -60,6 +60,11 @@ class MaxLanguageApp(ctk.CTk):
     def abrirPainelAdmin(self):
         self.limparTela()
         self.frameAtual = TelaAdmin(master=self, app_router=self)
+        self.frameAtual.pack(fill="both", expand=True)
+
+    def abrirTelaRegistro(self):
+        self.limparTela()
+        self.frameAtual = TelaRegistro(master=self, app_router=self)
         self.frameAtual.pack(fill="both", expand=True)
 
 

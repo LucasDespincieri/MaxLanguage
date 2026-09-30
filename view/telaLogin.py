@@ -7,13 +7,13 @@ class TelaLogin(ctk.CTkFrame):
         self.app_router = app_router
 
         titulo = ctk.CTkLabel(self, text="MaxLanguage", font=ctk.CTkFont(size=32, weight="bold"))
-        titulo.pack(pady=(120, 10))
+        titulo.pack(pady=(100, 10))
 
         subtitulo = ctk.CTkLabel(self, text="Aprenda jogando.", font=ctk.CTkFont(size=16), text_color="gray")
-        subtitulo.pack(pady=(0, 60))
+        subtitulo.pack(pady=(0, 40))
 
-        self.entradaCodigo = ctk.CTkEntry(self, placeholder_text="Digite seu código de usuário", width=250, height=45)
-        self.entradaCodigo.pack(pady=20)
+        self.entradaCodigo = ctk.CTkEntry(self, placeholder_text="Digite seu ID de usuário", width=250, height=45)
+        self.entradaCodigo.pack(pady=10)
 
         self.labelErro = ctk.CTkLabel(self, text="", text_color="red")
         self.labelErro.pack()
@@ -22,9 +22,15 @@ class TelaLogin(ctk.CTkFrame):
                                   command=self.fazerLogin)
         btnEntrar.pack(pady=10)
 
+        # NOVO: Botão para Criar Conta
+        btnCriarConta = ctk.CTkButton(self, text="Criar Nova Conta", fg_color="transparent", text_color="#58CC02",
+                                      border_width=2, border_color="#58CC02", width=250, height=45,
+                                      command=self.app_router.abrirTelaRegistro)
+        btnCriarConta.pack(pady=10)
+
         btnAdmin = ctk.CTkButton(self, text="Área do Professor", fg_color="transparent", text_color="gray",
                                  command=self.app_router.abrirPainelAdmin)
-        btnAdmin.pack(pady=30)
+        btnAdmin.pack(pady=20)
 
     def fazerLogin(self):
         codigoDigitado = self.entradaCodigo.get()
