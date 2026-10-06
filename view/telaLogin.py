@@ -22,7 +22,6 @@ class TelaLogin(ctk.CTkFrame):
                                   command=self.fazerLogin)
         btnEntrar.pack(pady=10)
 
-        # NOVO: Botão para Criar Conta
         btnCriarConta = ctk.CTkButton(self, text="Criar Nova Conta", fg_color="transparent", text_color="#58CC02",
                                       border_width=2, border_color="#58CC02", width=250, height=45,
                                       command=self.app_router.abrirTelaRegistro)

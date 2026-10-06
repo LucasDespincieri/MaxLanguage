@@ -23,14 +23,12 @@ class MaxLanguageApp(ctk.CTk):
         self.geometry("360x700")
         self.resizable(False, False)
 
-        # Banco de Dados
         self.tabelaIdioma = Idioma()
         self.tabelaLicao = Licao(self.tabelaIdioma)
         self.tabelaExercicio = Exercicio(self.tabelaLicao, self.tabelaIdioma)
         self.tabelaUsuario = Usuario(self.tabelaIdioma)
         self.gameController = GameController(self.tabelaUsuario, self.tabelaExercicio, self.tabelaLicao)
 
-        # Estados globais
         self.usuarioLogado = None
         self.idiomaAtivo = None
         self.frameAtual = None
