@@ -20,7 +20,7 @@ class MaxLanguageApp(ctk.CTk):
         super().__init__()
 
         self.title("MaxLanguage")
-        self.geometry("360x700")
+        self.geometry("400x740")
         self.resizable(False, False)
 
         self.tabelaIdioma = Idioma()

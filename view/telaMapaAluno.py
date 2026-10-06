@@ -121,7 +121,7 @@ class TelaMapaAluno(ctk.CTkFrame):
             codUsuario = self.app_router.usuarioLogado['codigo']
             self.app_router.tabelaUsuario.excluirUsuario(codUsuario)
             popUp.destroy()
-            self.app_router.abrirTelaLogin()  # Volta ao início
+            self.app_router.abrirTelaLogin()
 
         ctk.CTkButton(popUp, text="Sim, apagar conta", fg_color="red", hover_color="#D13A3A",
                       command=executarExclusao).pack(pady=5)
@@ -146,11 +146,6 @@ class TelaMapaAluno(ctk.CTkFrame):
 
         ctk.CTkButton(frameTop, text="✖", width=40, height=40, fg_color="transparent", text_color="gray",
                       hover_color="#333333", font=ctk.CTkFont(size=20), command=self.desenharMapa).pack(side="left")
-
-        barraProgresso = ctk.CTkProgressBar(frameTop, width=200, height=15, fg_color="#4B4B4B",
-                                            progress_color="#58CC02")
-        barraProgresso.pack(side="left", padx=20)
-        barraProgresso.set(0.5)
 
         ctk.CTkLabel(self, text=f"Fase {dificuldadeDesejada}", font=ctk.CTkFont(size=14, weight="bold"),
                      text_color="gray").pack(pady=(20, 0))
@@ -185,14 +180,12 @@ class TelaMapaAluno(ctk.CTkFrame):
         elif tipoExercicio == 3:
 
             import random
-            pares = []
             colunaEsq = []
             colunaDir = []
 
             for par in exercicioAtual['opcoes']:
                 if '=' in par:
                     esq, dir = par.split('=')
-                    pares.append((esq.strip(), dir.strip()))
                     colunaEsq.append(esq.strip())
                     colunaDir.append(dir.strip())
 
