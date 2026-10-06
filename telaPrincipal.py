@@ -41,7 +41,6 @@ class MaxLanguageApp(ctk.CTk):
         if self.frameAtual is not None:
             self.frameAtual.destroy()
 
-    # --- ROTEAMENTO ---
     def abrirTelaLogin(self):
         self.limparTela()
         self.frameAtual = TelaLogin(master=self, app_router=self)

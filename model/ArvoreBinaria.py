@@ -76,7 +76,7 @@ class ArvoreBinaria:
 
         return noAtual
 
-    def encontrarMenorNo(self, no_atual):
-        while no_atual.esquerda is not None:
-            no_atual = no_atual.esquerda
-        return no_atual
+    def encontrarMenorNo(self, noAtual):
+        while noAtual.esquerda is not None:
+            noAtual = noAtual.esquerda
+        return noAtual
